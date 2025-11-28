@@ -64,16 +64,13 @@ class AuthService {
         return null;
       }
 
-      // Get authorization tokens for Firebase
-      final tokens = googleUser.authorizationTokens;
-      if (tokens == null) {
-        return null;
-      }
+      // Obtain the auth details from the request
+      final GoogleSignInAuthentication googleAuth = await googleUser.authentication;
 
       // Create a new credential
       final OAuthCredential credential = GoogleAuthProvider.credential(
-        accessToken: tokens.accessToken,
-        idToken: tokens.idToken,
+        accessToken: googleAuth.accessToken,
+        idToken: googleAuth.idToken,
       );
 
       // Sign in to Firebase with the credential
@@ -91,7 +88,7 @@ class AuthService {
   Future<void> signOut() async {
     await _auth.signOut();
     await _ensureGoogleSignInInitialized();
-    await GoogleSignIn.instance.disconnect();
+    await GoogleSignIn.instance.signOut();
   }
 
   /// Get a user-friendly error message from FirebaseAuthException.
