@@ -121,7 +121,7 @@ class _SignInDialogContentState extends State<SignInDialogContent> {
                   const Padding(
                     padding: EdgeInsets.symmetric(vertical: 16),
                     child: Text(
-                      "Access to all features by signing in",
+                      "Sign in to access all features",
                       textAlign: TextAlign.center,
                     ),
                   ),
