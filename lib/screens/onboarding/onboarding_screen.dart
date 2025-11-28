@@ -6,14 +6,14 @@ import 'package:rive/rive.dart' hide Image;
 import 'components/animated_btn.dart';
 import 'components/sign_in_dialog.dart';
 
-class OnbodingScreen extends StatefulWidget {
-  const OnbodingScreen({super.key});
+class OnboardingScreen extends StatefulWidget {
+  const OnboardingScreen({super.key});
 
   @override
-  State<OnbodingScreen> createState() => _OnbodingScreenState();
+  State<OnboardingScreen> createState() => _OnboardingScreenState();
 }
 
-class _OnbodingScreenState extends State<OnbodingScreen> {
+class _OnboardingScreenState extends State<OnboardingScreen> {
   late RiveAnimationController _btnAnimationController;
 
   bool isShowSignInDialog = false;
@@ -104,14 +104,6 @@ class _OnbodingScreenState extends State<OnbodingScreen> {
                               context,
                               onValue: (_) {},
                             );
-                            // showCustomDialog(
-                            //   context,
-                            //   onValue: (_) {
-                            //     setState(() {
-                            //       isShowSignInDialog = false;
-                            //     });
-                            //   },
-                            // );
                           },
                         );
                       },

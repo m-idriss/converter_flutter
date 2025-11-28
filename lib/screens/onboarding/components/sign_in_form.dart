@@ -41,8 +41,7 @@ class _SignInFormState extends State<SignInForm> {
     confetti = controller.findInput<bool>("Trigger explosion") as SMITrigger;
   }
 
-  void singIn(BuildContext context) {
-    // confetti.fire();
+  void signIn(BuildContext context) {
     setState(() {
       isShowConfetti = true;
       isShowLoading = true;
@@ -59,9 +58,7 @@ class _SignInFormState extends State<SignInForm> {
                 isShowLoading = false;
               });
               confetti.fire();
-              // Navigate & hide confetti
               Future.delayed(const Duration(seconds: 1), () {
-                // Navigator.pop(context);
                 if (!context.mounted) return;
                 Navigator.push(
                   context,
@@ -150,7 +147,7 @@ class _SignInFormState extends State<SignInForm> {
                 padding: const EdgeInsets.only(top: 8, bottom: 24),
                 child: ElevatedButton.icon(
                   onPressed: () {
-                    singIn(context);
+                    signIn(context);
                   },
                   style: ElevatedButton.styleFrom(
                     backgroundColor: const Color(0xFFF77D8E),
