@@ -6,6 +6,9 @@ import 'package:converter_flutter/screens/entryPoint/entry_point.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  // Initialize Firebase. For platform-specific configuration, run:
+  // `flutterfire configure` to generate firebase_options.dart, then use:
+  // await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
   await Firebase.initializeApp();
   runApp(const MyApp());
 }
