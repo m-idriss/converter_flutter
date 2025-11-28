@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:converter_flutter/screens/onboding/onboding_screen.dart';
+import 'package:converter_flutter/screens/onboarding/onboarding_screen.dart';
 
 void main() {
   runApp(const MyApp());
@@ -31,7 +31,7 @@ class MyApp extends StatelessWidget {
           errorBorder: defaultInputBorder,
         ),
       ),
-      home: const OnbodingScreen(),
+      home: const OnboardingScreen(),
     );
   }
 }

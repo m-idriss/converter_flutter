@@ -33,7 +33,6 @@ void showCustomDialog(BuildContext context, {required ValueChanged onValue}) {
             ],
           ),
           child: Scaffold(
-            // backgroundColor: Colors.transparent,
             body: Stack(
               clipBehavior: Clip.none,
               children: [
@@ -137,23 +136,12 @@ void showCustomDialog(BuildContext context, {required ValueChanged onValue}) {
       );
     },
     transitionBuilder: (_, anim, _, child) {
-      Tween<Offset> tween;
-      // if (anim.status == AnimationStatus.reverse) {
-      //   tween = Tween(begin: const Offset(0, 1), end: Offset.zero);
-      // } else {
-      //   tween = Tween(begin: const Offset(0, -1), end: Offset.zero);
-      // }
-
-      tween = Tween(begin: const Offset(0, -1), end: Offset.zero);
+      Tween<Offset> tween = Tween(begin: const Offset(0, -1), end: Offset.zero);
 
       return SlideTransition(
         position: tween.animate(
           CurvedAnimation(parent: anim, curve: Curves.easeInOut),
         ),
-        // child: FadeTransition(
-        //   opacity: anim,
-        //   child: child,
-        // ),
         child: child,
       );
     },

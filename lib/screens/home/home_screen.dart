@@ -55,8 +55,8 @@ class HomePage extends StatelessWidget {
                         const EdgeInsets.only(left: 20, right: 20, bottom: 20),
                     child: SecondaryCourseCard(
                       title: course.title,
-                      iconsSrc: course.iconSrc,
-                      colorl: course.color,
+                      iconSrc: course.iconSrc,
+                      color: course.color,
                     ),
                   )),
             ],
