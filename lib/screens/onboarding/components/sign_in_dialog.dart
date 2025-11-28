@@ -121,7 +121,7 @@ class _SignInDialogContentState extends State<SignInDialogContent> {
                   const Padding(
                     padding: EdgeInsets.symmetric(vertical: 16),
                     child: Text(
-                      "Access to 240+ hours of content. Learn design and code, by building real apps with Flutter and Swift.",
+                      "Access to all features by signing in",
                       textAlign: TextAlign.center,
                     ),
                   ),
