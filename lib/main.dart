@@ -1,7 +1,12 @@
 import 'package:flutter/material.dart';
-import 'package:converter_flutter/screens/onboarding/onboarding_screen.dart';
+import 'package:firebase_core/firebase_core.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:converter_flutter/screens/onboding/onboding_screen.dart';
+import 'package:converter_flutter/screens/entryPoint/entry_point.dart';
 
-void main() {
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await Firebase.initializeApp();
   runApp(const MyApp());
 }
 
@@ -31,7 +36,23 @@ class MyApp extends StatelessWidget {
           errorBorder: defaultInputBorder,
         ),
       ),
-      home: const OnboardingScreen(),
+      home: StreamBuilder<User?>(
+        stream: FirebaseAuth.instance.authStateChanges(),
+        builder: (context, snapshot) {
+          // Show loading indicator while checking auth state
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return const Scaffold(
+              body: Center(child: CircularProgressIndicator()),
+            );
+          }
+          // User is logged in, go to entry point
+          if (snapshot.hasData) {
+            return const EntryPoint();
+          }
+          // User is not logged in, show onboarding
+          return const OnbodingScreen();
+        },
+      ),
     );
   }
 }

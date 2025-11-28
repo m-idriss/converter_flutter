@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 
 import '../../../model/menu.dart';
 import '../../../utils/rive_utils.dart';
+import '../../../services/auth_service.dart';
 import 'info_card.dart';
 import 'side_menu.dart';
 
@@ -14,8 +16,18 @@ class SideBar extends StatefulWidget {
 
 class _SideBarState extends State<SideBar> {
   Menu selectedSideMenu = sidebarMenus.first;
+  final AuthService _authService = AuthService();
+
+  Future<void> _signOut() async {
+    await _authService.signOut();
+  }
+
   @override
   Widget build(BuildContext context) {
+    final user = FirebaseAuth.instance.currentUser;
+    final displayName = user?.displayName ?? user?.email?.split('@').first ?? 'User';
+    final email = user?.email ?? '';
+
     return SafeArea(
       child: Container(
         width: 288,
@@ -31,9 +43,9 @@ class _SideBarState extends State<SideBar> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              const InfoCard(
-                name: "Abu Anwar",
-                bio: "YouTuber",
+              InfoCard(
+                name: displayName,
+                bio: email,
               ),
               Padding(
                 padding: const EdgeInsets.only(left: 24, top: 32, bottom: 16),
@@ -83,6 +95,21 @@ class _SideBarState extends State<SideBar> {
                           stateMachineName: menu.rive.stateMachineName);
                     },
                   )),
+              const Spacer(),
+              Padding(
+                padding: const EdgeInsets.all(24),
+                child: ListTile(
+                  onTap: _signOut,
+                  leading: const Icon(
+                    Icons.logout,
+                    color: Colors.white70,
+                  ),
+                  title: const Text(
+                    "Sign Out",
+                    style: TextStyle(color: Colors.white70),
+                  ),
+                ),
+              ),
             ],
           ),
         ),
