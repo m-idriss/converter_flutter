@@ -4,13 +4,21 @@ import 'package:google_sign_in/google_sign_in.dart';
 /// Service class for handling Firebase Authentication operations.
 class AuthService {
   final FirebaseAuth _auth = FirebaseAuth.instance;
-  final GoogleSignIn _googleSignIn = GoogleSignIn();
+  bool _googleSignInInitialized = false;
 
   /// Stream of authentication state changes.
   Stream<User?> get authStateChanges => _auth.authStateChanges();
 
   /// Get the current user.
   User? get currentUser => _auth.currentUser;
+
+  /// Ensures GoogleSignIn is initialized before use.
+  Future<void> _ensureGoogleSignInInitialized() async {
+    if (!_googleSignInInitialized) {
+      await GoogleSignIn.instance.initialize();
+      _googleSignInInitialized = true;
+    }
+  }
 
   /// Sign in with email and password.
   /// 
@@ -45,31 +53,45 @@ class AuthService {
   /// Returns [UserCredential] on success, null if user cancelled.
   /// Throws [FirebaseAuthException] on failure.
   Future<UserCredential?> signInWithGoogle() async {
-    // Trigger the Google Sign-In flow
-    final GoogleSignInAccount? googleUser = await _googleSignIn.signIn();
+    await _ensureGoogleSignInInitialized();
     
-    // If user cancelled the sign-in
-    if (googleUser == null) {
-      return null;
+    try {
+      // Trigger the Google Sign-In flow using the singleton pattern
+      final GoogleSignInAccount? googleUser = await GoogleSignIn.instance.authenticate();
+      
+      // If user cancelled the sign-in
+      if (googleUser == null) {
+        return null;
+      }
+
+      // Get authorization tokens for Firebase
+      final tokens = googleUser.authorizationTokens;
+      if (tokens == null) {
+        return null;
+      }
+
+      // Create a new credential
+      final OAuthCredential credential = GoogleAuthProvider.credential(
+        accessToken: tokens.accessToken,
+        idToken: tokens.idToken,
+      );
+
+      // Sign in to Firebase with the credential
+      return await _auth.signInWithCredential(credential);
+    } on GoogleSignInException catch (e) {
+      // User cancelled the sign-in flow
+      if (e.code == GoogleSignInExceptionCode.canceled) {
+        return null;
+      }
+      rethrow;
     }
-
-    // Obtain the auth details from the request
-    final GoogleSignInAuthentication googleAuth = await googleUser.authentication;
-
-    // Create a new credential
-    final OAuthCredential credential = GoogleAuthProvider.credential(
-      accessToken: googleAuth.accessToken,
-      idToken: googleAuth.idToken,
-    );
-
-    // Sign in to Firebase with the credential
-    return await _auth.signInWithCredential(credential);
   }
 
   /// Sign out the current user.
   Future<void> signOut() async {
     await _auth.signOut();
-    await _googleSignIn.signOut();
+    await _ensureGoogleSignInInitialized();
+    await GoogleSignIn.instance.disconnect();
   }
 
   /// Get a user-friendly error message from FirebaseAuthException.
