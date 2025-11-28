@@ -2,7 +2,9 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:rive/rive.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:converter_flutter/screens/entryPoint/entry_point.dart';
+import 'package:converter_flutter/services/auth_service.dart';
 
 class SignInForm extends StatefulWidget {
   const SignInForm({
@@ -15,13 +17,27 @@ class SignInForm extends StatefulWidget {
 
 class _SignInFormState extends State<SignInForm> {
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
+  final TextEditingController _emailController = TextEditingController();
+  final TextEditingController _passwordController = TextEditingController();
+  final AuthService _authService = AuthService();
+
   bool isShowLoading = false;
   bool isShowConfetti = false;
+  bool isSignUp = false;
+  String? errorMessage;
+
   late SMITrigger error;
   late SMITrigger success;
   late SMITrigger reset;
 
   late SMITrigger confetti;
+
+  @override
+  void dispose() {
+    _emailController.dispose();
+    _passwordController.dispose();
+    super.dispose();
+  }
 
   void _onCheckRiveInit(Artboard artboard) {
     StateMachineController? controller =
@@ -41,48 +57,83 @@ class _SignInFormState extends State<SignInForm> {
     confetti = controller.findInput<bool>("Trigger explosion") as SMITrigger;
   }
 
-  void signIn(BuildContext context) {
+  Future<void> _authenticate(BuildContext context) async {
     setState(() {
       isShowConfetti = true;
       isShowLoading = true;
+      errorMessage = null;
     });
-    Future.delayed(
-      const Duration(seconds: 1),
-      () {
-        if (_formKey.currentState!.validate()) {
-          success.fire();
-          Future.delayed(
-            const Duration(seconds: 2),
-            () {
-              setState(() {
-                isShowLoading = false;
-              });
-              confetti.fire();
-              Future.delayed(const Duration(seconds: 1), () {
-                if (!context.mounted) return;
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => const EntryPoint(),
-                  ),
-                );
-              });
-            },
-          );
-        } else {
-          error.fire();
-          Future.delayed(
-            const Duration(seconds: 2),
-            () {
-              setState(() {
-                isShowLoading = false;
-              });
-              reset.fire();
-            },
-          );
-        }
-      },
-    );
+
+    // Validate form first
+    if (!_formKey.currentState!.validate()) {
+      error.fire();
+      Future.delayed(
+        const Duration(seconds: 2),
+        () {
+          if (mounted) {
+            setState(() {
+              isShowLoading = false;
+            });
+            reset.fire();
+          }
+        },
+      );
+      return;
+    }
+
+    try {
+      if (isSignUp) {
+        await _authService.createUserWithEmailAndPassword(
+          email: _emailController.text.trim(),
+          password: _passwordController.text,
+        );
+      } else {
+        await _authService.signInWithEmailAndPassword(
+          email: _emailController.text.trim(),
+          password: _passwordController.text,
+        );
+      }
+
+      // Success
+      success.fire();
+      Future.delayed(
+        const Duration(seconds: 2),
+        () {
+          if (mounted) {
+            setState(() {
+              isShowLoading = false;
+            });
+            confetti.fire();
+            // Navigate after success
+            Future.delayed(const Duration(seconds: 1), () {
+              if (!context.mounted) return;
+              Navigator.pushReplacement(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => const EntryPoint(),
+                ),
+              );
+            });
+          }
+        },
+      );
+    } on FirebaseAuthException catch (e) {
+      error.fire();
+      setState(() {
+        errorMessage = _authService.getErrorMessage(e);
+      });
+      Future.delayed(
+        const Duration(seconds: 2),
+        () {
+          if (mounted) {
+            setState(() {
+              isShowLoading = false;
+            });
+            reset.fire();
+          }
+        },
+      );
+    }
   }
 
   @override
@@ -103,8 +154,12 @@ class _SignInFormState extends State<SignInForm> {
               Padding(
                 padding: const EdgeInsets.only(top: 8, bottom: 16),
                 child: TextFormField(
+                  controller: _emailController,
                   validator: (value) {
-                    if (value!.isEmpty) {
+                    if (value == null || value.isEmpty) {
+                      return "";
+                    }
+                    if (!value.contains('@')) {
                       return "";
                     }
                     return null;
@@ -128,9 +183,13 @@ class _SignInFormState extends State<SignInForm> {
               Padding(
                 padding: const EdgeInsets.only(top: 8, bottom: 16),
                 child: TextFormField(
+                  controller: _passwordController,
                   obscureText: true,
                   validator: (value) {
-                    if (value!.isEmpty) {
+                    if (value == null || value.isEmpty) {
+                      return "";
+                    }
+                    if (value.length < 6) {
                       return "";
                     }
                     return null;
@@ -143,12 +202,21 @@ class _SignInFormState extends State<SignInForm> {
                   ),
                 ),
               ),
+              if (errorMessage != null)
+                Padding(
+                  padding: const EdgeInsets.only(bottom: 16),
+                  child: Text(
+                    errorMessage!,
+                    style: const TextStyle(
+                      color: Colors.red,
+                      fontSize: 14,
+                    ),
+                  ),
+                ),
               Padding(
-                padding: const EdgeInsets.only(top: 8, bottom: 24),
+                padding: const EdgeInsets.only(top: 8, bottom: 16),
                 child: ElevatedButton.icon(
-                  onPressed: () {
-                    signIn(context);
-                  },
+                  onPressed: isShowLoading ? null : () => _authenticate(context),
                   style: ElevatedButton.styleFrom(
                     backgroundColor: const Color(0xFFF77D8E),
                     minimumSize: const Size(double.infinity, 56),
@@ -165,7 +233,23 @@ class _SignInFormState extends State<SignInForm> {
                     CupertinoIcons.arrow_right,
                     color: Color(0xFFFE0037),
                   ),
-                  label: const Text("Sign In"),
+                  label: Text(isSignUp ? "Sign Up" : "Sign In"),
+                ),
+              ),
+              Center(
+                child: TextButton(
+                  onPressed: () {
+                    setState(() {
+                      isSignUp = !isSignUp;
+                      errorMessage = null;
+                    });
+                  },
+                  child: Text(
+                    isSignUp
+                        ? "Already have an account? Sign In"
+                        : "Don't have an account? Sign Up",
+                    style: const TextStyle(color: Colors.black54),
+                  ),
                 ),
               ),
             ],
