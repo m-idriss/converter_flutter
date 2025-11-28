@@ -49,3 +49,15 @@ app.*.map.json
 **/Flutter/Flutter.podspec
 **/Flutter/Generated.xcconfig
 **/Flutter/ephemeral/
+
+# Firebase
+firebase.json
+.firebaserc
+.firebase/
+firebase-debug.log
+
+# Firebase app configs (do not commit)
+android/app/google-services.json
+ios/Runner/GoogleService-Info.plist
+macos/Runner/GoogleService-Info.plist
+**/DerivedData/

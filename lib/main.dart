@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:converter_flutter/screens/onboding/onboding_screen.dart';
+import 'package:converter_flutter/screens/onboarding/onboarding_screen.dart';
 import 'package:converter_flutter/screens/entryPoint/entry_point.dart';
 
 void main() async {
@@ -53,7 +53,7 @@ class MyApp extends StatelessWidget {
             return const EntryPoint();
           }
           // User is not logged in, show onboarding
-          return const OnbodingScreen();
+          return const OnboardingScreen();
         },
       ),
     );
