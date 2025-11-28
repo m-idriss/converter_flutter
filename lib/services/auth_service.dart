@@ -68,8 +68,8 @@ class AuthService {
 
   /// Sign out the current user.
   Future<void> signOut() async {
-    await _googleSignIn.signOut();
     await _auth.signOut();
+    await _googleSignIn.signOut();
   }
 
   /// Get a user-friendly error message from FirebaseAuthException.
