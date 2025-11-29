@@ -4,13 +4,21 @@ import 'package:google_sign_in/google_sign_in.dart';
 /// Service class for handling Firebase Authentication operations.
 class AuthService {
   final FirebaseAuth _auth = FirebaseAuth.instance;
-  final GoogleSignIn _googleSignIn = GoogleSignIn();
+  bool _googleSignInInitialized = false;
 
   /// Stream of authentication state changes.
   Stream<User?> get authStateChanges => _auth.authStateChanges();
 
   /// Get the current user.
   User? get currentUser => _auth.currentUser;
+
+  /// Ensures GoogleSignIn is initialized before use.
+  Future<void> _ensureGoogleSignInInitialized() async {
+    if (!_googleSignInInitialized) {
+      await GoogleSignIn.instance.initialize();
+      _googleSignInInitialized = true;
+    }
+  }
 
   /// Sign in with email and password.
   /// 
@@ -45,31 +53,71 @@ class AuthService {
   /// Returns [UserCredential] on success, null if user cancelled.
   /// Throws [FirebaseAuthException] on failure.
   Future<UserCredential?> signInWithGoogle() async {
-    // Trigger the Google Sign-In flow
-    final GoogleSignInAccount? googleUser = await _googleSignIn.signIn();
+    await _ensureGoogleSignInInitialized();
     
-    // If user cancelled the sign-in
-    if (googleUser == null) {
-      return null;
+    try {
+      // Trigger the Google Sign-In flow using the singleton pattern
+      final GoogleSignInAccount? googleUser = await GoogleSignIn.instance.authenticate();
+      
+      // If user cancelled the sign-in
+      if (googleUser == null) {
+        return null;
+      }
+
+      // Obtain the id token from authentication
+      final GoogleSignInAuthentication googleAuth = await googleUser.authentication;
+      final String? idToken = googleAuth.idToken;
+      if (idToken == null) {
+        throw FirebaseAuthException(
+          code: 'missing-id-token',
+          message: 'Google authentication did not return a valid ID token.',
+        );
+      }
+
+      // Request authorization for scopes to get the access token
+      // These are the minimal scopes needed for Firebase Auth.
+      // Note: 'openid' is typically included by default in OAuth 2.0 flows and may not need to be specified explicitly.
+      const scopes = [
+        'https://www.googleapis.com/auth/userinfo.email',
+        'https://www.googleapis.com/auth/userinfo.profile',
+      ];
+      final authorization = await googleUser.authorizationClient.authorizeScopes(scopes);
+      final String? accessToken = authorization.accessToken;
+
+      // Ensure accessToken is not null before proceeding
+      if (accessToken == null) {
+        throw FirebaseAuthException(
+          code: 'missing-access-token',
+          message: 'Failed to retrieve Google access token. Please try again.',
+        );
+      }
+      // Create a new credential
+      final OAuthCredential credential = GoogleAuthProvider.credential(
+        accessToken: accessToken,
+        idToken: idToken,
+      );
+
+      // Sign in to Firebase with the credential
+      return await _auth.signInWithCredential(credential);
+    } on GoogleSignInException catch (e) {
+      // User cancelled the sign-in flow
+      if (e.code == GoogleSignInExceptionCode.canceled) {
+        return null;
+      }
+      rethrow;
     }
-
-    // Obtain the auth details from the request
-    final GoogleSignInAuthentication googleAuth = await googleUser.authentication;
-
-    // Create a new credential
-    final OAuthCredential credential = GoogleAuthProvider.credential(
-      accessToken: googleAuth.accessToken,
-      idToken: googleAuth.idToken,
-    );
-
-    // Sign in to Firebase with the credential
-    return await _auth.signInWithCredential(credential);
   }
 
   /// Sign out the current user.
+  /// 
+  /// Initializes Google Sign-In first to ensure consistent state,
+  /// then signs out from both Google and Firebase.
   Future<void> signOut() async {
+    // Initialize Google Sign-In first to ensure we can sign out properly
+    // If this fails, we avoid leaving user in inconsistent state
+    await _ensureGoogleSignInInitialized();
+    await GoogleSignIn.instance.signOut();
     await _auth.signOut();
-    await _googleSignIn.signOut();
   }
 
   /// Get a user-friendly error message from FirebaseAuthException.
