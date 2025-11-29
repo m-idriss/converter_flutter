@@ -67,6 +67,12 @@ class AuthService {
       // Obtain the id token from authentication
       final GoogleSignInAuthentication googleAuth = await googleUser.authentication;
       final String? idToken = googleAuth.idToken;
+      if (idToken == null) {
+        throw FirebaseAuthException(
+          code: 'missing-id-token',
+          message: 'Google authentication did not return a valid ID token.',
+        );
+      }
 
       // Request authorization for scopes to get the access token
       // These are the minimal scopes needed for Firebase Auth
