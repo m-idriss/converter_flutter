@@ -1,7 +1,7 @@
 import 'package:flutter/cupertino.dart';
-import 'package:flutter/material.dart';
+import 'package:flutter/material.dart' hide LinearGradient;
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:rive/rive.dart';
+import 'package:rive/rive.dart' hide LinearGradient;
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:converter_flutter/screens/entryPoint/entry_point.dart';
 import 'package:converter_flutter/services/auth_service.dart';
