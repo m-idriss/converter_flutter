@@ -59,7 +59,7 @@ class CourseCard extends StatelessWidget {
                         child: CircleAvatar(
                           radius: 20,
                           backgroundImage: AssetImage(
-                            "assets/avaters/Avatar ${index + 1}.jpg",
+                            "assets/avatars/Avatar ${index + 1}.jpg",
                           ),
                         ),
                       ),
