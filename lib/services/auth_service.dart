@@ -64,15 +64,10 @@ class AuthService {
     
     try {
       // Trigger the Google Sign-In flow using the singleton pattern
-      final GoogleSignInAccount? googleUser = await GoogleSignIn.instance.authenticate();
-      
-      // If user cancelled the sign-in
-      if (googleUser == null) {
-        return null;
-      }
+      final GoogleSignInAccount googleUser = await GoogleSignIn.instance.authenticate();
 
       // Obtain the id token from authentication
-      final GoogleSignInAuthentication googleAuth = await googleUser.authentication;
+      final GoogleSignInAuthentication googleAuth = googleUser.authentication;
       final String? idToken = googleAuth.idToken;
       if (idToken == null) {
         throw FirebaseAuthException(
@@ -89,15 +84,8 @@ class AuthService {
         'https://www.googleapis.com/auth/userinfo.profile',
       ];
       final authorization = await googleUser.authorizationClient.authorizeScopes(scopes);
-      final String? accessToken = authorization.accessToken;
+      final String accessToken = authorization.accessToken;
 
-      // Ensure accessToken is not null before proceeding
-      if (accessToken == null) {
-        throw FirebaseAuthException(
-          code: 'missing-access-token',
-          message: 'Failed to retrieve Google access token. Please try again.',
-        );
-      }
       // Create a new credential
       final OAuthCredential credential = GoogleAuthProvider.credential(
         accessToken: accessToken,
