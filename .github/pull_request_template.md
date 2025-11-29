@@ -50,7 +50,7 @@ Fixes #
 ---
 
 ### 📚 References
-- [Contribution Guidelines](.github/copilot-instructions.md)
+- [Contribution Guidelines](../copilot-instructions.md)
 - [Project README](../README.md)
 
 <!-- 
