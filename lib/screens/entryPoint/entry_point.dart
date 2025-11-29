@@ -4,6 +4,11 @@ import 'package:flutter/material.dart';
 import 'package:rive/rive.dart';
 import 'package:converter_flutter/constants.dart';
 import 'package:converter_flutter/screens/home/home_screen.dart';
+import 'package:converter_flutter/screens/nav/chat_screen.dart';
+import 'package:converter_flutter/screens/nav/search_screen.dart';
+import 'package:converter_flutter/screens/nav/timer_screen.dart';
+import 'package:converter_flutter/screens/nav/notification_screen.dart';
+import 'package:converter_flutter/screens/nav/profile_screen.dart';
 import 'package:converter_flutter/utils/rive_utils.dart';
 
 import '../../model/menu.dart';
@@ -32,6 +37,23 @@ class _EntryPointState extends State<EntryPoint>
       setState(() {
         selectedBottomNav = menu;
       });
+    }
+  }
+
+  Widget _getScreenForNavItem(Menu navItem) {
+    switch (navItem.title) {
+      case 'Chat':
+        return const ChatScreen();
+      case 'Search':
+        return const SearchScreen();
+      case 'Timer':
+        return const TimerScreen();
+      case 'Notification':
+        return const NotificationScreen();
+      case 'Profile':
+        return const ProfileScreen();
+      default:
+        return const HomePage();
     }
   }
 
@@ -88,11 +110,11 @@ class _EntryPointState extends State<EntryPoint>
               offset: Offset(-animation.value * 265, 0),
               child: Transform.scale(
                 scale: scaleAnimation.value,
-                child: const ClipRRect(
-                  borderRadius: BorderRadius.all(
+                child: ClipRRect(
+                  borderRadius: const BorderRadius.all(
                     Radius.circular(24),
                   ),
-                  child: HomePage(),
+                  child: _getScreenForNavItem(selectedBottomNav),
                 ),
               ),
             ),
