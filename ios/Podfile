@@ -32,12 +32,6 @@ target 'Runner' do
 
   flutter_install_all_ios_pods File.dirname(File.realpath(__FILE__))
 
-
-  # --- FIX for Google Sign-In version conflict ---
-  pod 'GTMSessionFetcher/Core', '~> 3.3'
-  pod 'GoogleSignIn', '~> 8.0'
-  # ----------------------------------------------
-
   target 'RunnerTests' do
     inherit! :search_paths
   end
