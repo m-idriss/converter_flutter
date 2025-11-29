@@ -145,97 +145,114 @@ class _SignInFormState extends State<SignInForm> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              const Text(
-                "Email",
-                style: TextStyle(
-                  color: Colors.black54,
-                ),
-              ),
-              Padding(
-                padding: const EdgeInsets.only(top: 8, bottom: 16),
-                child: TextFormField(
-                  controller: _emailController,
-                  validator: (value) {
-                    if (value == null || value.isEmpty) {
-                      return "";
-                    }
-                    if (!value.contains('@')) {
-                      return "";
-                    }
-                    return null;
-                  },
-                  keyboardType: TextInputType.emailAddress,
-                  textInputAction: TextInputAction.next,
-                  decoration: InputDecoration(
-                    prefixIcon: Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 8),
-                      child: SvgPicture.asset("assets/icons/email.svg"),
+              // Email Label
+              Row(
+                children: [
+                  Icon(
+                    Icons.email_outlined,
+                    size: 16,
+                    color: Colors.grey.shade600,
+                  ),
+                  const SizedBox(width: 8),
+                  Text(
+                    "Email Address",
+                    style: TextStyle(
+                      color: Colors.grey.shade700,
+                      fontWeight: FontWeight.w500,
+                      fontSize: 13,
                     ),
                   ),
-                ),
+                ],
               ),
-              const Text(
-                "Password",
-                style: TextStyle(
-                  color: Colors.black54,
-                ),
+              const SizedBox(height: 8),
+              _buildModernTextField(
+                controller: _emailController,
+                hintText: "Enter your email",
+                icon: "assets/icons/email.svg",
+                validator: (value) {
+                  if (value == null || value.isEmpty) {
+                    return "";
+                  }
+                  if (!value.contains('@')) {
+                    return "";
+                  }
+                  return null;
+                },
+                keyboardType: TextInputType.emailAddress,
+                textInputAction: TextInputAction.next,
               ),
-              Padding(
-                padding: const EdgeInsets.only(top: 8, bottom: 16),
-                child: TextFormField(
-                  controller: _passwordController,
-                  obscureText: true,
-                  validator: (value) {
-                    if (value == null || value.isEmpty) {
-                      return "";
-                    }
-                    if (value.length < 6) {
-                      return "";
-                    }
-                    return null;
-                  },
-                  decoration: InputDecoration(
-                    prefixIcon: Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 8),
-                      child: SvgPicture.asset("assets/icons/password.svg"),
+              const SizedBox(height: 20),
+              // Password Label
+              Row(
+                children: [
+                  Icon(
+                    Icons.lock_outline,
+                    size: 16,
+                    color: Colors.grey.shade600,
+                  ),
+                  const SizedBox(width: 8),
+                  Text(
+                    "Password",
+                    style: TextStyle(
+                      color: Colors.grey.shade700,
+                      fontWeight: FontWeight.w500,
+                      fontSize: 13,
                     ),
                   ),
-                ),
+                ],
+              ),
+              const SizedBox(height: 8),
+              _buildModernTextField(
+                controller: _passwordController,
+                hintText: "Enter your password",
+                icon: "assets/icons/password.svg",
+                obscureText: true,
+                validator: (value) {
+                  if (value == null || value.isEmpty) {
+                    return "";
+                  }
+                  if (value.length < 6) {
+                    return "";
+                  }
+                  return null;
+                },
               ),
               if (errorMessage != null)
-                Padding(
-                  padding: const EdgeInsets.only(bottom: 16),
-                  child: Text(
-                    errorMessage!,
-                    style: const TextStyle(
-                      color: Colors.red,
-                      fontSize: 14,
-                    ),
+                Container(
+                  margin: const EdgeInsets.only(top: 16),
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                  decoration: BoxDecoration(
+                    color: Colors.red.shade50,
+                    borderRadius: BorderRadius.circular(12),
+                    border: Border.all(color: Colors.red.shade200, width: 1),
                   ),
-                ),
-              Padding(
-                padding: const EdgeInsets.only(top: 8, bottom: 16),
-                child: ElevatedButton.icon(
-                  onPressed: isShowLoading ? null : () => _authenticate(context),
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: const Color(0xFFF77D8E),
-                    minimumSize: const Size(double.infinity, 56),
-                    shape: const RoundedRectangleBorder(
-                      borderRadius: BorderRadius.only(
-                        topLeft: Radius.circular(10),
-                        topRight: Radius.circular(25),
-                        bottomRight: Radius.circular(25),
-                        bottomLeft: Radius.circular(25),
+                  child: Row(
+                    children: [
+                      Icon(Icons.error_outline,
+                          color: Colors.red.shade400, size: 20),
+                      const SizedBox(width: 8),
+                      Expanded(
+                        child: Text(
+                          errorMessage!,
+                          style: TextStyle(
+                            color: Colors.red.shade700,
+                            fontSize: 13,
+                          ),
+                        ),
                       ),
-                    ),
+                    ],
                   ),
-                  icon: const Icon(
-                    CupertinoIcons.arrow_right,
-                    color: Color(0xFFFE0037),
-                  ),
-                  label: Text(isSignUp ? "Sign Up" : "Sign In"),
                 ),
+              const SizedBox(height: 24),
+              // Modern Sign In Button
+              _buildGradientButton(
+                onPressed:
+                    isShowLoading ? null : () => _authenticate(context),
+                text: isSignUp ? "Create Account" : "Sign In",
               ),
+              const SizedBox(height: 16),
+              // Toggle Sign In/Sign Up
               Center(
                 child: TextButton(
                   onPressed: () {
@@ -244,11 +261,31 @@ class _SignInFormState extends State<SignInForm> {
                       errorMessage = null;
                     });
                   },
-                  child: Text(
-                    isSignUp
-                        ? "Already have an account? Sign In"
-                        : "Don't have an account? Sign Up",
-                    style: const TextStyle(color: Colors.black54),
+                  style: TextButton.styleFrom(
+                    padding: const EdgeInsets.symmetric(
+                        horizontal: 16, vertical: 8),
+                  ),
+                  child: RichText(
+                    text: TextSpan(
+                      style: TextStyle(
+                        color: Colors.grey.shade600,
+                        fontSize: 14,
+                      ),
+                      children: [
+                        TextSpan(
+                          text: isSignUp
+                              ? "Already have an account? "
+                              : "Don't have an account? ",
+                        ),
+                        TextSpan(
+                          text: isSignUp ? "Sign In" : "Sign Up",
+                          style: const TextStyle(
+                            color: Color(0xFF667EEA),
+                            fontWeight: FontWeight.w600,
+                          ),
+                        ),
+                      ],
+                    ),
                   ),
                 ),
               ),
@@ -275,6 +312,137 @@ class _SignInFormState extends State<SignInForm> {
               )
             : const SizedBox(),
       ],
+    );
+  }
+
+  Widget _buildModernTextField({
+    required TextEditingController controller,
+    required String hintText,
+    required String icon,
+    String? Function(String?)? validator,
+    bool obscureText = false,
+    TextInputType? keyboardType,
+    TextInputAction? textInputAction,
+  }) {
+    return Container(
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(16),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.grey.shade200,
+            blurRadius: 10,
+            offset: const Offset(0, 4),
+          ),
+        ],
+      ),
+      child: TextFormField(
+        controller: controller,
+        validator: validator,
+        obscureText: obscureText,
+        keyboardType: keyboardType,
+        textInputAction: textInputAction,
+        style: const TextStyle(
+          fontSize: 15,
+          fontWeight: FontWeight.w400,
+        ),
+        decoration: InputDecoration(
+          hintText: hintText,
+          hintStyle: TextStyle(
+            color: Colors.grey.shade400,
+            fontSize: 14,
+          ),
+          prefixIcon: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 12),
+            child: SvgPicture.asset(
+              icon,
+              width: 22,
+              height: 22,
+            ),
+          ),
+          filled: true,
+          fillColor: Colors.white,
+          border: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(16),
+            borderSide: BorderSide(color: Colors.grey.shade200),
+          ),
+          enabledBorder: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(16),
+            borderSide: BorderSide(color: Colors.grey.shade200),
+          ),
+          focusedBorder: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(16),
+            borderSide: const BorderSide(color: Color(0xFF667EEA), width: 2),
+          ),
+          errorBorder: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(16),
+            borderSide: BorderSide(color: Colors.red.shade300),
+          ),
+          focusedErrorBorder: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(16),
+            borderSide: BorderSide(color: Colors.red.shade300, width: 2),
+          ),
+          contentPadding:
+              const EdgeInsets.symmetric(vertical: 16, horizontal: 16),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildGradientButton({
+    required VoidCallback? onPressed,
+    required String text,
+  }) {
+    return Container(
+      width: double.infinity,
+      height: 56,
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(16),
+        gradient: onPressed != null
+            ? const LinearGradient(
+                begin: Alignment.centerLeft,
+                end: Alignment.centerRight,
+                colors: [Color(0xFF667EEA), Color(0xFF764BA2)],
+              )
+            : LinearGradient(
+                colors: [Colors.grey.shade400, Colors.grey.shade400],
+              ),
+        boxShadow: onPressed != null
+            ? [
+                BoxShadow(
+                  color: const Color(0xFF667EEA).withValues(alpha: 0.4),
+                  blurRadius: 15,
+                  offset: const Offset(0, 8),
+                ),
+              ]
+            : [],
+      ),
+      child: Material(
+        color: Colors.transparent,
+        child: InkWell(
+          onTap: onPressed,
+          borderRadius: BorderRadius.circular(16),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Text(
+                text,
+                style: const TextStyle(
+                  color: Colors.white,
+                  fontSize: 16,
+                  fontWeight: FontWeight.w600,
+                  letterSpacing: 0.5,
+                ),
+              ),
+              const SizedBox(width: 8),
+              const Icon(
+                CupertinoIcons.arrow_right,
+                color: Colors.white,
+                size: 20,
+              ),
+            ],
+          ),
+        ),
+      ),
     );
   }
 }
