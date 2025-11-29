@@ -109,10 +109,15 @@ class AuthService {
   }
 
   /// Sign out the current user.
+  /// 
+  /// Initializes Google Sign-In first to ensure consistent state,
+  /// then signs out from both Google and Firebase.
   Future<void> signOut() async {
-    await _auth.signOut();
+    // Initialize Google Sign-In first to ensure we can sign out properly
+    // If this fails, we avoid leaving user in inconsistent state
     await _ensureGoogleSignInInitialized();
     await GoogleSignIn.instance.signOut();
+    await _auth.signOut();
   }
 
   /// Get a user-friendly error message from FirebaseAuthException.
