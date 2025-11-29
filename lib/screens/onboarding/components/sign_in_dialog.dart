@@ -118,7 +118,7 @@ class _SignInDialogContentState extends State<SignInDialogContent>
       child: BackdropFilter(
         filter: ImageFilter.blur(sigmaX: 20, sigmaY: 20),
         child: Container(
-          height: 680,
+          height: 640,
           margin: const EdgeInsets.symmetric(horizontal: 16),
           decoration: BoxDecoration(
             gradient: LinearGradient(
@@ -188,9 +188,9 @@ class _SignInDialogContentState extends State<SignInDialogContent>
                           ),
                           const SizedBox(height: 28),
                           const SignInForm(),
-                          const SizedBox(height: 24),
-                          _buildDivider(),
-                          const SizedBox(height: 20),
+                          //const SizedBox(height: 24),
+                          //_buildDivider(),
+                          //const SizedBox(height: 20),
                           Text(
                             "Or continue with",
                             style: TextStyle(
@@ -310,12 +310,12 @@ class _SignInDialogContentState extends State<SignInDialogContent>
         _buildSocialButton(
           icon: "assets/icons/email_box.svg",
           onPressed: () {},
-        ),
+        ), /*
         const SizedBox(width: 16),
         _buildSocialButton(
           icon: "assets/icons/apple_box.svg",
           onPressed: () {},
-        ),
+        ),*/
         const SizedBox(width: 16),
         _isGoogleSignInLoading
             ? Container(
