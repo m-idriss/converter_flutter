@@ -64,13 +64,24 @@ class AuthService {
         return null;
       }
 
-      // Obtain the auth details from the request
+      // Obtain the id token from authentication
       final GoogleSignInAuthentication googleAuth = await googleUser.authentication;
+      final String? idToken = googleAuth.idToken;
+
+      // Request authorization for scopes to get the access token
+      // These are the minimal scopes needed for Firebase Auth
+      const scopes = [
+        'https://www.googleapis.com/auth/userinfo.email',
+        'https://www.googleapis.com/auth/userinfo.profile',
+        'openid'
+      ];
+      final authorization = await googleUser.authorizationClient.authorizeScopes(scopes);
+      final String? accessToken = authorization.accessToken;
 
       // Create a new credential
       final OAuthCredential credential = GoogleAuthProvider.credential(
-        accessToken: googleAuth.accessToken,
-        idToken: googleAuth.idToken,
+        accessToken: accessToken,
+        idToken: idToken,
       );
 
       // Sign in to Firebase with the credential
