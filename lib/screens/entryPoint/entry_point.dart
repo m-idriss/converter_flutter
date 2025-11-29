@@ -74,7 +74,7 @@ class _EntryPointState extends State<EntryPoint>
             height: MediaQuery.of(context).size.height,
             duration: const Duration(milliseconds: 200),
             curve: Curves.fastOutSlowIn,
-            left: isSideBarOpen ? 0 : -288,
+            right: isSideBarOpen ? 0 : -288,
             top: 0,
             child: const SideBar(),
           ),
@@ -83,9 +83,9 @@ class _EntryPointState extends State<EntryPoint>
             transform: Matrix4.identity()
               ..setEntry(3, 2, 0.001)
               ..rotateY(
-                  1 * animation.value - 30 * (animation.value) * pi / 180),
+                  -1 * animation.value + 30 * (animation.value) * pi / 180),
             child: Transform.translate(
-              offset: Offset(animation.value * 265, 0),
+              offset: Offset(-animation.value * 265, 0),
               child: Transform.scale(
                 scale: scaleAnimation.value,
                 child: const ClipRRect(
@@ -100,7 +100,7 @@ class _EntryPointState extends State<EntryPoint>
           AnimatedPositioned(
             duration: const Duration(milliseconds: 200),
             curve: Curves.fastOutSlowIn,
-            left: isSideBarOpen ? 220 : 0,
+            right: isSideBarOpen ? 220 : 0,
             top: 16,
             child: MenuBtn(
               press: () {
