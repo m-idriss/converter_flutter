@@ -19,7 +19,7 @@ class NotificationScreen extends StatelessWidget {
               ),
               const SizedBox(height: 16),
               Text(
-                'Notifications',
+                'Notification',
                 style: Theme.of(context).textTheme.headlineMedium!.copyWith(
                     color: Colors.black, fontWeight: FontWeight.bold),
               ),
