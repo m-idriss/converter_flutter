@@ -75,11 +75,11 @@ class AuthService {
       }
 
       // Request authorization for scopes to get the access token
-      // These are the minimal scopes needed for Firebase Auth
+      // These are the minimal scopes needed for Firebase Auth.
+      // Note: 'openid' is typically included by default in OAuth 2.0 flows and may not need to be specified explicitly.
       const scopes = [
         'https://www.googleapis.com/auth/userinfo.email',
         'https://www.googleapis.com/auth/userinfo.profile',
-        'openid'
       ];
       final authorization = await googleUser.authorizationClient.authorizeScopes(scopes);
       final String? accessToken = authorization.accessToken;
