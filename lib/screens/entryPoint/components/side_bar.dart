@@ -4,6 +4,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import '../../../model/menu.dart';
 import '../../../utils/rive_utils.dart';
 import '../../../services/auth_service.dart';
+import '../../onboarding/onboarding_screen.dart';
 import 'info_card.dart';
 import 'side_menu.dart';
 
@@ -20,12 +21,20 @@ class _SideBarState extends State<SideBar> {
 
   Future<void> _signOut() async {
     await _authService.signOut();
+    if (mounted) {
+      Navigator.of(context).pushAndRemoveUntil(
+        MaterialPageRoute(builder: (context) => const OnboardingScreen()),
+        (route) => false,
+      );
+    }
   }
 
   @override
   Widget build(BuildContext context) {
     final user = FirebaseAuth.instance.currentUser;
-    final displayName = user?.displayName ?? user?.email?.split('@').first ?? 'User';
+    final displayName = (user?.displayName?.isNotEmpty ?? false) 
+        ? user!.displayName! 
+        : user?.email?.split('@').first ?? 'User';
     final email = user?.email ?? '';
 
     return SafeArea(

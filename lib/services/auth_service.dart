@@ -36,16 +36,23 @@ class AuthService {
 
   /// Create a new user with email and password.
   /// 
+  /// Sets the display name from the email username (part before @) if not provided.
   /// Returns [UserCredential] on success.
   /// Throws [FirebaseAuthException] on failure.
   Future<UserCredential> createUserWithEmailAndPassword({
     required String email,
     required String password,
   }) async {
-    return await _auth.createUserWithEmailAndPassword(
+    final credential = await _auth.createUserWithEmailAndPassword(
       email: email,
       password: password,
     );
+    
+    // Set display name from email username
+    final username = email.split('@').first;
+    await credential.user?.updateDisplayName(username);
+    
+    return credential;
   }
 
   /// Sign in with Google.
@@ -110,13 +117,17 @@ class AuthService {
 
   /// Sign out the current user.
   /// 
-  /// Initializes Google Sign-In first to ensure consistent state,
-  /// then signs out from both Google and Firebase.
+  /// Signs out from both Google (if applicable) and Firebase.
+  /// Ensures Firebase signOut completes even if Google signOut fails.
   Future<void> signOut() async {
-    // Initialize Google Sign-In first to ensure we can sign out properly
-    // If this fails, we avoid leaving user in inconsistent state
-    await _ensureGoogleSignInInitialized();
-    await GoogleSignIn.instance.signOut();
+    // Try to sign out from Google, but don't let it block Firebase signOut
+    try {
+      await _ensureGoogleSignInInitialized();
+      await GoogleSignIn.instance.signOut();
+    } catch (e) {
+      // Ignore Google signOut errors - user may have signed in with email/password
+    }
+    // Always sign out from Firebase
     await _auth.signOut();
   }
 
