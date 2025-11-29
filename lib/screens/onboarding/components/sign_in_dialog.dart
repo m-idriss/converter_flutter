@@ -4,6 +4,7 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:converter_flutter/screens/entryPoint/entry_point.dart';
 import 'package:converter_flutter/services/auth_service.dart';
+import 'package:converter_flutter/widgets/error_message_card.dart';
 
 import 'sign_in_form.dart';
 
@@ -200,32 +201,9 @@ class _SignInDialogContentState extends State<SignInDialogContent>
                           ),
                           const SizedBox(height: 20),
                           if (_googleSignInError != null)
-                            Container(
+                            ErrorMessageCard(
+                              message: _googleSignInError!,
                               margin: const EdgeInsets.only(bottom: 16),
-                              padding: const EdgeInsets.symmetric(
-                                  horizontal: 16, vertical: 12),
-                              decoration: BoxDecoration(
-                                color: Colors.red.shade50,
-                                borderRadius: BorderRadius.circular(12),
-                                border: Border.all(
-                                    color: Colors.red.shade200, width: 1),
-                              ),
-                              child: Row(
-                                children: [
-                                  Icon(Icons.error_outline,
-                                      color: Colors.red.shade400, size: 20),
-                                  const SizedBox(width: 8),
-                                  Expanded(
-                                    child: Text(
-                                      _googleSignInError!,
-                                      style: TextStyle(
-                                        color: Colors.red.shade700,
-                                        fontSize: 13,
-                                      ),
-                                    ),
-                                  ),
-                                ],
-                              ),
                             ),
                           _buildSocialButtons(),
                         ],

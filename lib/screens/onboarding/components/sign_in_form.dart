@@ -7,6 +7,7 @@ import 'package:rive/rive.dart' hide LinearGradient;
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:converter_flutter/screens/entryPoint/entry_point.dart';
 import 'package:converter_flutter/services/auth_service.dart';
+import 'package:converter_flutter/widgets/error_message_card.dart';
 
 class SignInForm extends StatefulWidget {
   const SignInForm({
@@ -220,32 +221,7 @@ class _SignInFormState extends State<SignInForm> {
                 },
               ),
               if (errorMessage != null)
-                Container(
-                  margin: const EdgeInsets.only(top: 16),
-                  padding:
-                      const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-                  decoration: BoxDecoration(
-                    color: Colors.red.shade50,
-                    borderRadius: BorderRadius.circular(12),
-                    border: Border.all(color: Colors.red.shade200, width: 1),
-                  ),
-                  child: Row(
-                    children: [
-                      Icon(Icons.error_outline,
-                          color: Colors.red.shade400, size: 20),
-                      const SizedBox(width: 8),
-                      Expanded(
-                        child: Text(
-                          errorMessage!,
-                          style: TextStyle(
-                            color: Colors.red.shade700,
-                            fontSize: 13,
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
+                ErrorMessageCard(message: errorMessage!),
               const SizedBox(height: 24),
               // Modern Sign In Button
               _buildGradientButton(
