@@ -25,7 +25,9 @@ class _SideBarState extends State<SideBar> {
   @override
   Widget build(BuildContext context) {
     final user = FirebaseAuth.instance.currentUser;
-    final displayName = user?.displayName ?? user?.email?.split('@').first ?? 'User';
+    final displayName = (user?.displayName?.isNotEmpty ?? false) 
+        ? user!.displayName! 
+        : user?.email?.split('@').first ?? 'User';
     final email = user?.email ?? '';
 
     return SafeArea(
