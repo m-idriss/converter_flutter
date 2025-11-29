@@ -78,6 +78,13 @@ class AuthService {
       final authorization = await googleUser.authorizationClient.authorizeScopes(scopes);
       final String? accessToken = authorization.accessToken;
 
+      // Ensure accessToken is not null before proceeding
+      if (accessToken == null) {
+        throw FirebaseAuthException(
+          code: 'missing-access-token',
+          message: 'Failed to retrieve Google access token. Please try again.',
+        );
+      }
       // Create a new credential
       final OAuthCredential credential = GoogleAuthProvider.credential(
         accessToken: accessToken,
