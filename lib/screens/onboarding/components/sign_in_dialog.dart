@@ -236,31 +236,33 @@ class _SignInDialogContentState extends State<SignInDialogContent>
                     left: 0,
                     right: 0,
                     bottom: -52,
-                    child: GestureDetector(
-                      onTap: () => Navigator.of(context).pop(),
-                      child: Container(
-                        width: 40,
-                        height: 40,
-                        decoration: BoxDecoration(
-                          shape: BoxShape.circle,
-                          gradient: const LinearGradient(
-                            begin: Alignment.topLeft,
-                            end: Alignment.bottomRight,
-                            colors: [Color(0xFF667EEA), Color(0xFF764BA2)],
-                          ),
-                          boxShadow: [
-                            BoxShadow(
-                              color:
-                                  const Color(0xFF667EEA).withValues(alpha: 0.4),
-                              blurRadius: 12,
-                              offset: const Offset(0, 4),
+                    child: Center(
+                      child: GestureDetector(
+                        onTap: () => Navigator.of(context).pop(),
+                        child: Container(
+                          width: 40,
+                          height: 40,
+                          decoration: BoxDecoration(
+                            shape: BoxShape.circle,
+                            gradient: const LinearGradient(
+                              begin: Alignment.topLeft,
+                              end: Alignment.bottomRight,
+                              colors: [Color(0xFF667EEA), Color(0xFF764BA2)],
                             ),
-                          ],
-                        ),
-                        child: const Icon(
-                          Icons.close_rounded,
-                          size: 22,
-                          color: Colors.white,
+                            boxShadow: [
+                              BoxShadow(
+                                color:
+                                    const Color(0xFF667EEA).withValues(alpha: 0.4),
+                                blurRadius: 12,
+                                offset: const Offset(0, 4),
+                              ),
+                            ],
+                          ),
+                          child: const Icon(
+                            Icons.close_rounded,
+                            size: 22,
+                            color: Colors.white,
+                          ),
                         ),
                       ),
                     ),
