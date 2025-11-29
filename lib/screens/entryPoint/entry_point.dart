@@ -43,7 +43,7 @@ class _EntryPointState extends State<EntryPoint>
   Widget _getScreenForNavItem(Menu navItem) {
     switch (navItem.title) {
       case 'Chat':
-        return const ChatScreen();
+        return const HomePage();
       case 'Search':
         return const SearchScreen();
       case 'Timer':
